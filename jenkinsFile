@@ -5,7 +5,10 @@ pipeline {
     stages {
        stage('Test'){
             steps {
-                test()
+               // test()
+               test {
+                   
+               }
             }
         }
     }
