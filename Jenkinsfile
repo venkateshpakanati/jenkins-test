@@ -48,19 +48,13 @@ podTemplate(label: 'test-pod',
 
     stage ('Test stage') { 
       container('maven') {
-       echo "under maven >>>>>>>>>>>>>>>>>>>>>>>"
+        echo "under maven >>>>>>>>>>>>>>>>>>>>>>>"
         sh 'mvn -version'
-         dir("first-stash") {
+        dir("first-stash") {
           unstash "first-stash"
         }
-
-    // Look, no output directory under the root!
-    // pwd() outputs the current directory Pipeline is running in.
-    sh "ls -la ${pwd()}"
-
-    // And look, output directory is there under first-stash!
-    sh "ls -la ${pwd()}/first-stash"
-
+        sh "ls -la ${pwd()}"
+        sh "ls -la ${pwd()}/first-stash"
       }
     }
   }
