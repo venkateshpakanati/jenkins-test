@@ -36,18 +36,31 @@ podTemplate(label: 'test-pod',
   ]
 )
 {
-  node  {
+  node ('master')  {
     stage ('Checkout Code') {
         git branch: 'master',
             credentialsId: '35205444-4645-4167-b50e-c65137059f09',
             url: 'https://github.com/venkateshpakanati/microservices.git'
 
         sh "ls -lat"
+        stash name: "first-stash", includes: "**/*"
     }
 
     stage ('Test stage') { 
       container('maven') {
        echo "under maven >>>>>>>>>>>>>>>>>>>>>>>"
+        sh 'mvn -version'
+         dir("first-stash") {
+          unstash "first-stash"
+        }
+
+    // Look, no output directory under the root!
+    // pwd() outputs the current directory Pipeline is running in.
+    sh "ls -la ${pwd()}"
+
+    // And look, output directory is there under first-stash!
+    sh "ls -la ${pwd()}/first-stash"
+
       }
     }
   }
