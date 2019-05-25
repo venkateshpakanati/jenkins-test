@@ -17,7 +17,7 @@
 
 //#!/usr/bin/groovy
 
-podTemplate(label: 'twistlock-example-builder', 
+podTemplate(label: 'test-pod', 
   containers: [
     containerTemplate(
       name: 'jnlp',
@@ -25,8 +25,8 @@ podTemplate(label: 'twistlock-example-builder',
       args: '${computer.jnlpmac} ${computer.name}'
     ),
     containerTemplate(
-      name: 'alpine',
-      image: 'twistian/alpine:latest',
+      name: 'maven',
+      image: 'zenika/alpine-maven',
       command: 'cat',
       ttyEnabled: true
     ),
@@ -36,16 +36,19 @@ podTemplate(label: 'twistlock-example-builder',
   ]
 )
 {
-  node ('twistlock-example-builder') {
+  node ('test-node') {
+    stage ('Checkout Code') {
+        git branch: 'master',
+            credentialsId: '35205444-4645-4167-b50e-c65137059f09',
+            url: 'ssh://github.com/venkateshpakanati/microservices.git'
 
-    stage ('Pull image') { 
-      container('alpine') {
-        sh """
-        curl --unix-socket /var/run/docker.sock -X POST "http:/v1.24/images/create?fromImage=nginx:stable-alpine"
-        """
-      }
+        sh "ls -lat"
     }
 
-
+    stage ('Test stage') { 
+      container('maven') {
+       echo "under maven >>>>>>>>>>>>>>>>>>>>>>>"
+      }
+    }
   }
 }
