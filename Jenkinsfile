@@ -40,7 +40,7 @@ podTemplate(label: 'test-pod',
     stage ('Checkout Code') {
         git branch: 'master',
             credentialsId: '35205444-4645-4167-b50e-c65137059f09',
-            url: 'ssh://github.com/venkateshpakanati/microservices.git'
+            url: 'https://github.com/venkateshpakanati/microservices.git'
 
         sh "ls -lat"
     }
