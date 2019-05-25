@@ -41,8 +41,7 @@ podTemplate(label: 'twistlock-example-builder',
     stage ('Pull image') { 
       container('alpine') {
         sh """
-        curl --unix-socket /var/run/docker.sock \ 
-             -X POST "http:/v1.24/images/create?fromImage=nginx:stable-alpine"
+        curl --unix-socket /var/run/docker.sock -X POST "http:/v1.24/images/create?fromImage=nginx:stable-alpine"
         """
       }
     }
