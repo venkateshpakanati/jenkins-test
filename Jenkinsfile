@@ -15,55 +15,38 @@
    
 // }
 
-pipeline {
-    agent any
+#!/usr/bin/groovy
 
-podTemplate(label: 'mypod', containers: [
-    containerTemplate(name: 'docker', image: 'docker', ttyEnabled: true, command: 'cat'),
-    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.8.0', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'helm', image: 'lachlanevenson/k8s-helm:latest', command: 'cat', ttyEnabled: true)
+podTemplate(label: 'twistlock-example-builder', 
+  containers: [
+    containerTemplate(
+      name: 'jnlp',
+      image: 'jenkinsci/jnlp-slave:3.10-1-alpine',
+      args: '${computer.jnlpmac} ${computer.name}'
+    ),
+    containerTemplate(
+      name: 'alpine',
+      image: 'twistian/alpine:latest',
+      command: 'cat',
+      ttyEnabled: true
+    ),
   ],
-  volumes: [
-    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-  ]) {
-    node('mypod') {
+  volumes: [ 
+    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'), 
+  ]
+)
+{
+  node ('twistlock-example-builder') {
 
-        stage('do some Docker work') {
-            container('docker') {
-
-                // withCredentials([[$class: 'UsernamePasswordMultiBinding', 
-                //         credentialsId: 'dockerhub',
-                //         usernameVariable: 'DOCKER_HUB_USER', 
-                //         passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
-                    
-                //     sh """
-                //         docker pull ubuntu
-                //         docker tag ubuntu ${env.DOCKER_HUB_USER}/ubuntu:${env.BUILD_NUMBER}
-                //         """
-                //     sh "docker login -u ${env.DOCKER_HUB_USER} -p ${env.DOCKER_HUB_PASSWORD} "
-                //     sh "docker push ${env.DOCKER_HUB_USER}/ubuntu:${env.BUILD_NUMBER} "
-                // }
-            }
-        }
-
-        stage('do some kubectl work') {
-            container('kubectl') {
-
-                // withCredentials([[$class: 'UsernamePasswordMultiBinding', 
-                //         credentialsId: 'dockerhub',
-                //         usernameVariable: 'DOCKER_HUB_USER',
-                //         passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
-                    
-                //     sh "kubectl get nodes"
-                // }
-            }
-        }
-        stage('do some helm work') {
-            container('helm') {
-
-               sh "helm ls"
-            }
-        }
+    stage ('Pull image') { 
+      container('alpine') {
+        sh """
+        curl --unix-socket /var/run/docker.sock \ 
+             -X POST "http:/v1.24/images/create?fromImage=nginx:stable-alpine"
+        """
+      }
     }
-}
+
+
+  }
 }
