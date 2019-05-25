@@ -15,7 +15,7 @@
    
 // }
 
-#!/usr/bin/groovy
+//#!/usr/bin/groovy
 
 podTemplate(label: 'twistlock-example-builder', 
   containers: [
