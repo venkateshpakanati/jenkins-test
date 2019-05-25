@@ -36,7 +36,7 @@ podTemplate(label: 'test-pod',
   ]
 )
 {
-  node ('test-node') {
+  node  {
     stage ('Checkout Code') {
         git branch: 'master',
             credentialsId: '35205444-4645-4167-b50e-c65137059f09',
