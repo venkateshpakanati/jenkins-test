@@ -52,6 +52,7 @@ pipeline {
 //         sh 'mvn -version'
 //         dir("first-stash") {
 //           unstash "first-stash"
+//           sh "mvn clean compile"  
 //         }
 //         sh "ls -la ${pwd()}"
 //         sh "ls -la ${pwd()}/first-stash"
