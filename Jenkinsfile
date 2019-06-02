@@ -1,19 +1,45 @@
 @Library('shared-jenkins-library') _
-pipeline {
-    agent any
-    
-    stages {
-       stage('Test'){
-            steps {
+
+// pod label
+def label = "pod-${UUID.randomUUID().toString()}-test"
+
+//Jenkins workspace
+def workingdir = "/home/jenkins"
+
+images = [maven:"maven:3.5-jdk-8", mavenMemLmt:"2Gi", mavenCpuLmt:"1500m"]
+
+
+
+//pipeline {
+    // agent any
+    //  stages {
+      // stage('Test'){
+        //    steps {
                // test()
-               test {
+            //    test {
                    
-               }
-            }
-        }
-    }
+            //    }
+            milestone ()
+            try {
+              timestamps {
+                slaveTemplate = new PodTemplates(label, images, workingdir, this)
+                slaveTemplate.BuilderTemplate {
+                   node(slaveTemplate.podlabel) {
+                     stage("checkout") {
+                    
+                     }
+                   }
+                }
+              }
+            } catch(e) {
+                println $e
+                throw e
+            }   
+         //   }
+      //  }
+  //  }
    
-}
+//}
 
 //#!/usr/bin/groovy
 
