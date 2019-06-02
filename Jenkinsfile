@@ -22,7 +22,7 @@ images = [maven:"maven:3.5-jdk-8", mavenMemLmt:"2Gi", mavenCpuLmt:"1500m"]
             milestone ()
             try {
               timestamps {
-                slaveTemplate = new PodTemplates(label, images, workingdir, this)
+                slaveTemplate = new test(label, images, workingdir, this)
                 slaveTemplate.BuilderTemplate {
                    node(slaveTemplate.podlabel) {
                      stage("checkout") {
